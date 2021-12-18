@@ -55,13 +55,19 @@ defmodule Issues.CLI do
     Issues.GithubIssues.fetch(user, project)
     |> decode_response()
     |> sort_into_descending_order()
-    |> last(count)
   end
 
   def last(list, count) do
     list
-    |> Enum.take(count)
+    |> take(count)
     |> Enum.reverse()
+  end
+
+  def take(list, count) do
+    case {list, count} do
+      {[h | _], 1} -> [h]
+      {[h | t], _} -> [h] ++ take(t, count - 1)
+    end
   end
 
   def decode_response({:ok, body}), do: body
