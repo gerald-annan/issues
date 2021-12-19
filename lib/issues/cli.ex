@@ -5,9 +5,6 @@ defmodule Issues.CLI do
   the various functions that end up generating a
   table of the last _n_ issues in a github project
   """
-  def run(argv) do
-    parse_args(argv)
-  end
 
   @doc """
   `argv` can be -h or --help, which returns :help.
@@ -55,6 +52,8 @@ defmodule Issues.CLI do
     Issues.GithubIssues.fetch(user, project)
     |> decode_response()
     |> sort_into_descending_order()
+    |> last(count)
+    |> Issues.TableFormatter.print_table_for_columns(["number", "created_at", "title"])
   end
 
   def last(list, count) do
