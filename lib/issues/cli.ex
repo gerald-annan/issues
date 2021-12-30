@@ -1,4 +1,6 @@
 defmodule Issues.CLI do
+  import Issues.TableFormatter, only: [print_table_for_columns: 2]
+
   @default_count 4
   @moduledoc """
   Handle the command line parsing and the dispatch to
@@ -34,12 +36,13 @@ defmodule Issues.CLI do
     :help
   end
 
-  def run(argv) do
+  def main(argv) do
     argv
     |> parse_args
     |> process
   end
 
+  @spec process({any, any, any}) :: :ok
   def process(:help) do
     IO.puts("""
     usage: issues <user> <project> [ count | #{@default_count} ]
@@ -53,7 +56,7 @@ defmodule Issues.CLI do
     |> decode_response()
     |> sort_into_descending_order()
     |> last(count)
-    |> Issues.TableFormatter.print_table_for_columns(["number", "created_at", "title"])
+    |> print_table_for_columns(["number", "created_at", "title"])
   end
 
   def last(list, count) do
